@@ -22,3 +22,28 @@ def run_insert(sql, params):
     cursor.close()
     db.close()
     return id
+
+def run_delete(sql, params):
+    #grab data from DB
+    db = sqlite3.connect('chinook.db')
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+    cursor.execute(sql, params)
+    id = cursor.lastrowid
+    db.commit()
+    cursor.close()
+    db.close()
+    return id
+
+def run_delete(sql):
+    #grab data from DB
+    db = sqlite3.connect('chinook.db')
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+    cursor.execute(sql)
+    id = cursor.lastrowid
+    db.commit()
+    cursor.close()
+    db.close()
+    return id
+

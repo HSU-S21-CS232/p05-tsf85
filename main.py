@@ -52,6 +52,7 @@ def search_tracks_genre(search_string):
     result = database.run_query(sql, params)
     return return_as_json(result)
 
+#Just used composer for a loose artist search
 @app.route('/tracks/byArtist/<search_string>')
 def search_tracks_artist(search_string):
     sql = "SELECT * FROM tracks WHERE instr(Composer, ?)>0"
@@ -59,15 +60,7 @@ def search_tracks_artist(search_string):
     result = database.run_query(sql, params)
     return return_as_json(result)
 
-#searches for an album Id
-@app.route('/idLookUp/album/<search_string>')
-def search_album_id(search_string):
-    sql = "SELECT * FROM albums WHERE instr(Title, ?)>0"
-    params = (search_string, )
-    result = database.run_query(sql, params)
-    return return_as_json(result)
-
-#searches tracks by an album id - make search specific
+#searches for an album name for an albumId and runs that into tracks
 @app.route('/tracks/byAlbum/<search_string>')
 def search_tracks_album(search_string):
     sql = """SELECT * 
@@ -78,6 +71,38 @@ def search_tracks_album(search_string):
     params = (search_string, )
     result = database.run_query(sql, params)
     return return_as_json(result)
+
+# adds item to cart folder... wish I'd have found LIMIT earlier for searching.
+@app.route('/cart/add/<search_string>', methods=['POST'])
+def add_to_cart(search_string):
+    sql = """INSERT INTO cart 
+             SELECT Name, TrackId, UnitPrice
+             From tracks
+             WHERE INSTR(TrackId, ?)>0
+             LIMIT 1
+          """
+    params = (search_string, )
+    id = database.run_insert(sql, params)
+    return jsonify({'id': id }) 
+
+#removes item from card using TrackId
+@app.route('/cart/remove/<search_string>', methods=['DELETE'])
+def remove_from_cart(search_string):
+    sql = """DELETE FROM cart
+             WHERE TrackId = ?
+          """
+    params = (search_string, )
+    id = database.run_delete(sql, params)
+    return jsonify({'id': id }) 
+
+@app.route('/cart/clear', methods=['DELETE'])
+def clear_cart():
+    sql = "DELETE FROM cart"
+
+    id = database.run_delete(sql)
+    return jsonify({'id': id }) 
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
