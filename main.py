@@ -34,21 +34,15 @@ def get_all_tracks_html():
 
 @app.route('/tracks/byName/<search_string>')
 def search_tracks_name(search_string):
-    sql = "SELECT * FROM tracks WHERE instr(GenreId, ?)>0"
+    sql = "SELECT * FROM tracks WHERE instr(Name, ?)>0"
     params = (search_string, )
     result = database.run_query(sql, params)
     return return_as_json(result)
 
-#Looks up the ID number for a genre to enter into the next function
-@app.route('/idLookUp/byGenre/<search_string>')
-def search_tracks_genre(search_string):
-    sql = "SELECT * FROM genres WHERE instr(Name, ?)>0"
-    params = (search_string, )
-    result = database.run_query(sql, params)
-    return return_as_json(result)
-
+#still not sure I understand all the pieces of this, but it seems to effectively search the genreIds by name and then
+#search through the tracks with an exact genreId search.
 @app.route('/tracks/byGenre/<search_string>')
-def search_genres(search_string):
+def search_tracks_genre(search_string):
     sql = """SELECT tracks.Name, * 
              FROM tracks 
              INNER JOIN genres 
@@ -57,14 +51,6 @@ def search_genres(search_string):
     params = (search_string, )
     result = database.run_query(sql, params)
     return return_as_json(result)
-
-#Enter genreID to search by previously found genreId
-# @app.route('/tracks/byGenreId/<search_string>')
-# def search_tracks_genre_id(search_string):
-#     sql = "SELECT * FROM tracks WHERE instr(GenreId, ?)>0"
-#     params = (search_string, )
-#     result = database.run_query(sql, params)
-#     return return_as_json(result)
 
 @app.route('/tracks/byArtist/<search_string>')
 def search_tracks_artist(search_string):
@@ -82,9 +68,13 @@ def search_album_id(search_string):
     return return_as_json(result)
 
 #searches tracks by an album id - make search specific
-@app.route('/tracks/byAlbumId/<search_string>')
+@app.route('/tracks/byAlbum/<search_string>')
 def search_tracks_album(search_string):
-    sql = "SELECT * FROM tracks WHERE instr(AlbumId, ?)>0"
+    sql = """SELECT * 
+             FROM tracks 
+             INNER JOIN albums 
+             ON tracks.albumId = albums.albumId 
+             WHERE INSTR(albums.Title, ?)>0"""
     params = (search_string, )
     result = database.run_query(sql, params)
     return return_as_json(result)
