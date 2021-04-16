@@ -47,13 +47,24 @@ def search_tracks_genre(search_string):
     result = database.run_query(sql, params)
     return return_as_json(result)
 
-#Enter genreID to search by previously found genreId
-@app.route('/tracks/byGenreId/<search_string>')
-def search_tracks_genre_id(search_string):
-    sql = "SELECT * FROM tracks WHERE instr(GenreId, ?)>0"
+@app.route('/tracks/byGenre/<search_string>')
+def search_genres(search_string):
+    sql = """SELECT tracks.Name, * 
+             FROM tracks 
+             INNER JOIN genres 
+             ON tracks.GenreId = genres.GenreId 
+             WHERE INSTR(genres.Name, ?)>0"""
     params = (search_string, )
     result = database.run_query(sql, params)
     return return_as_json(result)
+
+#Enter genreID to search by previously found genreId
+# @app.route('/tracks/byGenreId/<search_string>')
+# def search_tracks_genre_id(search_string):
+#     sql = "SELECT * FROM tracks WHERE instr(GenreId, ?)>0"
+#     params = (search_string, )
+#     result = database.run_query(sql, params)
+#     return return_as_json(result)
 
 @app.route('/tracks/byArtist/<search_string>')
 def search_tracks_artist(search_string):
