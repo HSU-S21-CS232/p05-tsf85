@@ -6,7 +6,7 @@ def run_query(sql, params = ()):
     db = sqlite3.connect('chinook.db')
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
-    cursor.execute(sql, params)
+    cursor.execute(sql, params) 
     result = cursor.fetchall()
     cursor.close()
     db.close()
