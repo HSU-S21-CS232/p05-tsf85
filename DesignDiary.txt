@@ -1,0 +1,21 @@
+I over-complicated this project from the very start. I spent days just trying to figure out
+all the syntax, and rewatching the class videos. I was trying all sorts of things to try and
+get the searches for album and genre id's to be more specific, so it didin't return everything
+with a '1' in it for example. I had also pretty much given up on making one function to find
+the ID for the searches and use that to search through tracks, but then I found the SQLite
+query tutorial and realized I was working too hard... It's pretty neat how you can just make
+a sql variable run searches through all those tables and fine tune them to get what you want.
+
+I was playing with making a a page error code if you weren't logged in which I just didn't 
+really get it and moved on to finish more of the basic requirements, and abandoned making
+logging in a requirement for checkout.
+
+There's still plenty of things I don't really understand for a lot of what I was using your
+starting code to work from. Just about everything in the database is basically magic to me,
+and I had to ask friends for help with expanding that when certain functions wouldn't work.
+
+I completed all of the basic requirements and will continue to work on additionals and upload
+them if you don't get right around to grading.
+
+https://github.com/HSU-S21-CS232/p05-tsf85/blob/main/P05-tsf85.gif
+https://github.com/HSU-S21-CS232/p05-tsf85/blob/main/P05-tsf85cartremove.gif
