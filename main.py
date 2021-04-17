@@ -109,11 +109,10 @@ def checkout(search_string):
     # if session['logged_in'] == False:
     #     abort(777, description="Not logged in.")
     
-    total = database.run_query("""SELECT 
+    total = database.run_total("""SELECT 
                                     SUM(UnitPrice)
                                   FROM 
-                                    cart
-                                  LIMIT 1""")
+                                    cart""")
     sql = """INSERT INTO invoices (
                         CustomerId,
                         InvoiceDate,
