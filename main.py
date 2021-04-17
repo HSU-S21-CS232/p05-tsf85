@@ -1,11 +1,11 @@
-from flask import Flask, jsonify, request, session, render_template
+from flask import Flask, jsonify, request, session, render_template, abort
 import database
 import os
 import sqlite3
 import json
 
 app = Flask(__name__)
-app.secret_key = "suiper secret key"
+app.secret_key = "super secret key"
 app.jinja_env.auto_reload = True
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -95,14 +95,50 @@ def remove_from_cart(search_string):
     id = database.run_delete(sql, params)
     return jsonify({'id': id }) 
 
+#clears the cart
 @app.route('/cart/clear', methods=['DELETE'])
 def clear_cart():
     sql = "DELETE FROM cart"
 
-    id = database.run_delete(sql)
-    return jsonify({'id': id }) 
+    id = database.run_clear(sql)
+    return jsonify({'id': id })
 
+#checkout. Enter customer ID number, checks if logged in, fill out fields and returns invoices
+@app.route('/cart/checkout/<search_string>', methods=['GET', 'POST']) 
+def checkout(search_string):
+    # if session['logged_in'] == False:
+    #     abort(777, description="Not logged in.")
+    
+    total = database.run_query("""SELECT 
+                                    SUM(UnitPrice)
+                                  FROM 
+                                    cart
+                                  LIMIT 1""")
+    sql = """INSERT INTO invoices (
+                        CustomerId,
+                        InvoiceDate,
+                        BillingAddress,
+                        BillingCity,
+                        BillingState,
+                        BillingCountry,
+                        BillingPostalCode,
+                        Total)
+                        VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)"""
+    params = (request.values['CustomerId'], 
+              request.values['InvoiceDate'], 
+              request.values['BillingAddress'], 
+              request.values['BillingCity'],
+              request.values['BillingState'],
+              request.values['BillingCountry'],
+              request.values['BillingPostalCode'],
+              total)
+              
+    database.run_insert(sql, params)
 
+    sql2 = "SELECT * FROM invoices WHERE CustomerId = ?"
+    params2 = (search_string, )
+    result = database.run_query(sql2, params2)
+    return return_as_json(result)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
